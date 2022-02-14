@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const chalk = require('chalk')
+const ora = require('ora')
+const download = require('download-git-repo')
+const process = require('child_process');
+const tplObj = require(`${__dirname}/../templateList`)
+console.log('tplObj', tplObj);
+
+program
+  .usage('<template-name> [project-name]')
+program.parse(process.argv)
+console.log(program.args);
+
+function checkParameter() {
+  // 当没有输入参数的时候给个提示
+  if (program.args.length < 2) {
+    program.help()
+    return false
+  }
+  let templateName = program.args[0]; // 模板名称，用于指向模板URL
+  let projectName = program.args[1]; // 新建的项目名称
+  // 小小校验一下参数
+  if (!tplObj[templateName]) {
+    console.log(chalk.red('\n 模板名称有误! \n '))
+    return false
+  }
+  if (!projectName) {
+    console.log(chalk.red('\n 项目名称不能为空! \n '))
+    return false
+  }
+  console.log(chalk.white('\n 模板开始生成... \n'))
+  downloadTemplate(tplObj[templateName], projectName)
+}
+
+function downloadTemplate(url, projectName) {
+  const spinner = ora("Downloading...");
+  spinner.start();
+  console.log(url);
+  download (
+    `direct:${url}`,
+    projectName,
+    { clone: true },
+    err => {
+      if (err) {
+        spinner.fail();
+        console.log(chalk.red(`Generation failed. ${err}`))
+        return
+      }
+      // 结束加载图标
+      spinner.succeed();
+      console.log(chalk.green('\n Generation completed!'))
+      console.log('\n To get started')
+      console.log(`\n    cd ${projectName} \n`)
+    }
+  )
+}
+
+function downloadDependency (projectName) { // 自动执行install
+  const cmd = `cd ${projectName} && npm install && npm run serve`;
+  process.exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log(chalk.red("error:" + error))
+    }
+    console.log(stdout);
+  });
+}
+
+checkParameter()

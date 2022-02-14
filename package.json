@@ -1,0 +1,24 @@
+{
+  "name": "tykj-cli",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "tykj": "bin/tykj",
+    "tykj-add": "bin/tykj-add",
+    "tykj-delete": "bin/tykj-delete",
+    "tykj-list": "bin/tykj-list",
+    "tykj-init": "bin/tykj-init"
+  },
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "commander": "^8.3.0",
+    "download-git-repo": "^3.0.2",
+    "inquirer": "^8.2.0"
+  }
+}
